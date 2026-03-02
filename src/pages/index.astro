@@ -1,6 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+if (!Astro.cookies.get('LoggedIn')) {
+  return (Astro.redirect('/login'))
+};
 ---
 
-<Layout title="Inicio de tu pagina">
+<Layout title="J.O.C.S.">
+
 </Layout>

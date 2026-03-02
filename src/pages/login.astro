@@ -1,0 +1,27 @@
+---
+import Layout from "@layouts/Layout.astro"
+import Logo from "@components/assets/Logo.astro"
+---
+
+<Layout title="Iniciar Sesión">
+  <h1>JOCS POS</h1>
+  <Logo width="226" height="226" />
+  <p>Bienvenido de nuevo</p>
+  <p>Favor de iniciar sesión</p>
+  <form action="/login" method="post">
+    <input type="text" name="username" placeholder="Usuario" required />
+    <input type="password" name="password" placeholder="Contraseña" required />
+    <button type="submit">Iniciar Sesión</button>
+  </form>
+  <div id="test">test</div>
+</Layout>
+
+<script src="@components/scripts/test.js"></script>
+
+<style>
+  #test {
+    cursor: pointer;
+    background: red;
+    padding: 5rem;
+  }
+</style>

@@ -1,0 +1,19 @@
+---
+import '@styles/venta.scss';
+import Layout from '@layouts/Layout.astro';
+
+import SidebarMenu from "@components/Layout/SidebarMenu.astro";
+import SidebarOptions from "@components/Layout/SidebarOptions.astro";
+import Canvas from "@components/Layout/Canvas.astro";
+
+---
+
+<Layout title="Punto de Venta">
+  <main class="Pos-Container">
+    <SidebarMenu/>
+    <Canvas/>
+    <SidebarOptions/>
+  </main>
+</Layout>
+
+<script src="@components/scripts/venta.js"></script>

@@ -10,9 +10,22 @@ import Canvas from "@components/Layout/Canvas.astro";
 
 <Layout title="Punto de Venta">
   <main class="Pos-Container">
-    <SidebarMenu/>
-    <Canvas/>
-    <SidebarOptions/>
+    <section class="Pos-Header">
+      <p class="user">Punto de Venta</p>
+      <p class="Data-product">text center</p>
+      <div class="Search-content">
+        <input 
+          type="text"
+          id="searchLabel"
+          class="searchBar"
+        >
+      </div>
+    </section>
+    <section class="Pos-Content">
+      <SidebarMenu/>
+      <Canvas/>
+      <SidebarOptions/>
+    </section>
   </main>
 </Layout>
 

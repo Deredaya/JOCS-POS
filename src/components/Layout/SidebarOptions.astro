@@ -1,5 +1,49 @@
 <div class="sidebarOptions">
-
-  <p>Confirmacion de la venta y apartado de metodo de pago</p>
+  <p>Confirmación de la venta y apartado de método de pago</p>
+  <input type="file" id="courseImageInput" accept="image/*" />
+  <button id="uploadBtn">Subir y ver URL</button>
 </div>
 
+<script>
+  const fileInput = document.getElementById('courseImageInput') as HTMLInputElement;
+  const uploadBtn = document.getElementById('uploadBtn') as HTMLButtonElement;
+
+  if (fileInput && uploadBtn) {
+    uploadBtn.addEventListener('click', async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return alert("Selecciona un archivo");
+
+      const formData = new FormData();
+      formData.append('courseImage', file);
+      formData.append('id', 'temp-id'); // Identificador para el nombre del archivo
+
+      try {
+        const response = await fetch('/a', { 
+          method: 'POST',
+          body: formData 
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          console.log("✅ ¡SUBIDA EXITOSA!");
+          console.log("🔗 URL PÚBLICA:");
+          console.log(result.url); // <--- ESTO ES LO QUE BUSCABAS
+          alert("URL mostrada en consola.");
+        } else {
+          console.error("❌ Error:", result.error);
+        }
+      } catch (err) {
+        console.error("❌ Error de red:", err);
+      }
+    });
+  }
+</script>
+
+<style>
+  .sidebarOptions {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+</style>

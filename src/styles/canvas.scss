@@ -1,8 +1,78 @@
 .Canvas {
   #content {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(141px, 1fr));
     gap: 15px;
     align-items: start;
+    height:auto;
+
+    .card {
+      position: relative;
+      width: 100%;
+      background: #fff;
+      border-radius: 15px;
+      user-select: none;
+      transition: all 0.5s ease;
+      outline: #fff solid 1px;
+      
+      .space {
+        position: relative;
+        left: 0;
+        right: 0;
+        top: 10px;
+        margin: 0 auto;
+        width: 150px;
+        height: 135px;
+      }
+
+      .img {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 10px;
+        margin: 0 auto;
+        width: 131px;
+        height: 131px;
+        border-radius: 15px;
+      }
+
+      .cant {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        left: 10px;
+        top: 10px;
+        width: 30px;
+        height: 30px;
+        background: #fff;
+        outline: black solid 1px;
+        border-radius: 50%;
+      }
+
+      .sku {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        padding: 4px 8px;
+        background: #fff;
+        outline: black solid 1px;
+        border-radius: 20px;
+      }
+      
+      .specs {
+        position: relative;
+        width: 100%;
+        height: 8rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 10px;
+      }
+
+    }
+    .active {
+      outline: #137FEC solid 1px;
+    }
   }
 }

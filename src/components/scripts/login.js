@@ -5,14 +5,15 @@ cookieManager.getCookie("LoggedIn") ? window.location.replace("/venta") : null;
 
 let { data: Users, error } = await supabase
   .from('Users')
-  .select('user,password')
+  .select('user,password,id')
 
 document.getElementById("loginForm").addEventListener("submit", function(event) {
     event.preventDefault();
     const User = Users.find(user => user.user === this.username.value && user.password === this.password.value);
 
     if (User) {
-        cookieManager.setCookie("LoggedIn", User.user, 18);
+        cookieManager.setCookie("LoggedIn", true, 18);
+        cookieManager.setCookie("UserId", User.id, 18);
         window.location.reload();
     } else {
         const errorMessage = document.getElementById("errorMessage");

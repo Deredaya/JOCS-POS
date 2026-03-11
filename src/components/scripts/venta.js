@@ -1,77 +1,113 @@
 import cookieManager from "./class/cookieManager";
 import supabase from "./supabase.js";
 
-cookieManager.getCookie("LoggedIn") ? null : window.location.replace("/login");
+////////////////////////////////////////////////////////////////////////
+// Pre-Load
+
+if (!cookieManager.getCookie("LoggedIn")) window.location.replace("/login");
+
+
+////////////////////////////////////////////////////////////////////////
+// Variables
+
+const userId = cookieManager.getCookie("UserId");
+const sellerElement = document.getElementById("sellerdb");
+const content = document.getElementById("content");
+const dateElement = document.getElementById("dateJs");
+const noResults = document.getElementById("no-results");
+const searchInput = document.getElementById("searchLabel");
+const canvas = document.querySelector(".Canvas");
+
+////////////////////////////////////////////////////////////////////////
+// Fetch Data
+const { data: User } = await supabase.from("Users").select("*").eq("id", userId).single();
+
+  
+////////////////////////////////////////////////////////////////////////
+//Config
 
 const searchDelay = 500;
+const texts = {
+  noResults: "No se encontraron resultados"
+};
+  
 
-let { data: Products, error } = await supabase
-  .from('Products')
-  .select('*')
+////////////////////////////////////////////////////////////////////////
+// Funciones
 
-document.getElementById("searchLabel").addEventListener("input", function(event) {
-    buscar(event.target.value);
-});
-
-
-const content = document.getElementById("content");
-
-
-const debounce = (func, delay) => {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
+const debounceTime = (fn, delay) => {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), delay);
   };
 };
 
+const updateTime = () =>
+  (dateElement.textContent = new Date().toLocaleString(undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }));
 
-const buscar = debounce((valor) => {
-    const productos = Products.filter(p => p.name.toLowerCase().includes(valor.toLowerCase()));
-    content.innerHTML = "";
-    productos.forEach(product => {
-        mostrarProducto(product);
-    })
+setInterval(updateTime, 1000);
+updateTime();
+
+
+const buscar = debounceTime(search => {
+  supabase
+    .from("Products")
+    .select("*")
+    .ilike("name", `%${search}%`)
+    .then(({ data: resultados }) => {
+      content.innerHTML = "";
+
+      if (!resultados.length) {
+        content.remove();
+        canvas.appendChild(noResults);
+        noResults.innerHTML = `<p>${texts.noResults}</p>`;
+        return;
+      }
+
+      noResults.remove();
+      canvas.appendChild(content);
+      const fragment = document.createDocumentFragment();
+      resultados.forEach(p => fragment.appendChild(createProduct(p)));
+      content.appendChild(fragment);
+    });
 }, searchDelay);
 
 
-document.addEventListener("paste", function(event) {
-  const pastedData = event.clipboardData.getData('text');
-  const product = Products.find(p => p.sku.toString() === pastedData);
-    content.innerHTML = "";
-  mostrarProducto(product);
-}
-);
-
-function mostrarProducto(producto) {
-    const card = content.appendChild(document.createElement("div"));
+function createProduct({ sku, image_path, name, price }) {
+    const card = document.createElement("div");
     card.className = "card";
-    card.id = `card-${producto.sku}`;
+    card.id = `card-${sku}`;
+    card.onclick = () => {
+      if(card.classList.contains("active")) return card.classList.remove("active");
+      document.querySelectorAll(".card.active").forEach(c => c.classList.remove("active"));
+      card.classList.add("active");
+    };
     card.innerHTML = `
-      <img class="img" src="${producto.image_path}" alt="${producto.name}">
+      <img class="img" src="${image_path}" alt="${name}">
       <div class="space"></div>
       <p class="cant">1</p>
-      <p class="sku">${producto.sku}</p>
+      <p class="sku">${sku}</p>
       <div class="specs">
-        <p class="nameProduct">${producto.name}</p>
-        <p class="discont"> Descuento: $0</p>
-        <p class="price">Precio: $${producto.price}</strong></p>
+        <p class="nameProduct">${name}</p>
+        <p class="discount"> Descuento: $0</p>
+        <p class="price">Precio: $${price}</strong></p>
       </div>`;        
+      return card;
 }
 
-document.addEventListener("click", (event) => {
-  const tarjetaClickeada = event.target.closest(".card");
 
-  if (!tarjetaClickeada) {
-    const tarjetaActiva = document.querySelector(".card.active");
-    if (tarjetaActiva) {
-        tarjetaActiva.classList.remove("active");
-    }
-  } else {
-    const todasLasCards = document.querySelectorAll(".card");
-    todasLasCards.forEach(c => c.classList.remove("active"));
-    tarjetaClickeada.classList.add("active");
-  }
-});
+////////////////////////////////////////////////////////////////////////
+// Eventos
+
+buscar("");
+sellerElement.textContent = User.user;
+
+searchInput.addEventListener("input", e => buscar(e.target.value));
+
